@@ -1,0 +1,17 @@
+Ketika deleimage spinner langsung muncul
+Upload image error objectU
+Upload sukses close nya ada dua
+Jika file tidak ditemukan button masih spinner
+
+
+Edit role permission jika id pada edit diisi asal muncul error
+Contollers builtin/Role_permission.php 
+- Contollers builtin/Role_permission.php bersihkan dari script lama
+- Hilangkan 'hasAllPermission' => $this->model->hasAllPermission($_POST['id_role'])
+- cek apakah //From controller module masih dipakai
+
+Models models/builtin/RolePermissionModel.php 
+- Get AllModulesById -> tidak dipakai
+- Cleanup model
+
+

@@ -1,0 +1,106 @@
+/**
+*	App Name	: Aplikasi Siswa dan Pembayaran SPP Sekolah
+*	Developed by: Agus Prawoto Hadi
+*	Website		: https://jagowebdev.com
+*	Year		: 2023-2023
+*/
+let file = '';
+jQuery(document).ready(function () {
+	function bytesToSize(bytes) {
+		var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+		if (bytes == 0) return 'n/a';
+		var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+		return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i];
+	};
+	
+	$('body').delegate('.remove-img', 'click', function(e) {
+		$container = $(this).parent().parent().parent();
+		$file = $container.find('.file');
+		input_file_name = $file.attr('name');
+		if ($container.find('.upload-file-thumb').find('img').length == 0) {
+			console.log('ggg');
+			$file.val('');
+		}
+		
+		$(this).parent().parent().remove();
+		$('.' + input_file_name + '-delete-img').val(1);
+	});
+	
+	$('body').delegate('.file', 'change', function(e) 
+	{
+		file = this.files[0];
+		$this = $(this);
+		
+		$this.parent().find('.alert-danger').remove();
+		$upload_file = $this.parent().children('.upload-file-thumb');
+		
+		$upload_file.find('img').remove();
+		$upload_file.find('.file-prop').empty();
+		$upload_file.hide();
+		if ($this.val() == '')
+			return false;
+		
+		name = $this.attr('name');
+		var reader = new FileReader();
+		
+		size = file.size;
+			
+		file_size = size + ' Bytes';
+		if (size > 1024 * 1024) {
+			file_size = parseFloat(size / (1024 * 1024)).toFixed(2) + ' Mb';
+		} else if (size > 1024) {
+			file_size = parseFloat(size / 1024).toFixed(2) + ' Kb';
+		}
+
+		// Closure to capture the file information.
+		reader.onload = (function(e) {
+			
+			// Render thumbnail.
+			// $upload_file.find('.file-prop').before(thumb);
+			if (file.type == 'image/png' || file.type == 'image/jpg' || file.type == 'image/jpeg') {
+				var img = new Image;
+				img.src = reader.result;
+				img.onload = function() {
+					var thumb = '<img class="thumb" src="' + e.target.result +
+								'" title="' + escape(file.name) + '"/>';
+					$upload_file.find('.file-prop').before(thumb);
+					var file_prop = '<ul><li><small>Name: ' + file.name + '</small></li><li><small>Size: ' + file_size + '</small></li><li><small>Dimension (W x H): ' + img.width + 'px X ' + img.height + 'px</small></li><li><small>Type: ' + file.type + '</small></li></ul>';
+					$upload_file.show().find('.file-prop').html(file_prop);
+				};
+			}
+		});
+		
+		reader.readAsDataURL(file);
+		
+		// max_size = 1024 * 1024 * 2;
+		max_size = 0;
+		$max_size_elm = $('.' + name + '-max-size');
+		if ($max_size_elm.length > 0) {
+			max_size = parseInt($max_size_elm.val());
+		}
+
+		if (max_size) {
+						
+			if ($(this).attr('data-max-size')) 
+			{
+				if (size > max_size) {
+					$('<small class="alert alert-danger mt-1" style="display:block">Ukuran file maksimal: ' + bytesToSize(max_size) + ', file Anda ' + file_size + '</small>').insertBefore($upload_file);
+					return;
+				}
+			}
+		}
+		
+		/* if (file.type != 'application/vnd.ms-excel' 
+				&& file.type != 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+				&& file.type != 'application/pdf'
+				&& file.type != 'application/msword'
+				&& file.type != 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+			) {
+			$('<small class="alert alert-danger">Tipe file yang diperbolehkan: .doc, .docx, .xls, .xlsx, dan .pdf</small>').insertAfter($this);
+			return;
+		} */
+		// console.log($upload_file.attr('class'));
+		/* var file_prop = '<ul><li><small>Name: ' + file.name + '</small></li><li><small>Size: ' + file_size + '</small></li><li><small>Type: ' + file.type + '</small></li></ul>';
+		$upload_file.show().find('span').html(file_prop); */
+	});
+});
